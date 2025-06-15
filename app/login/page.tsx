@@ -3,6 +3,7 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { login } from "../api/auth"; 
 
 export default function CircularLogin() {
   const [show, setShow] = useState(false);
@@ -28,10 +29,13 @@ export default function CircularLogin() {
     setError("");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const res = await login(formData);
+
+      localStorage.setItem("token", res.token);
+
       router.push("/dashboard");
-    } catch (err) {
-      setError("Invalid email or password");
+    } catch (err: any) {
+      setError(err.message || "Invalid email or password");
     } finally {
       setIsLoading(false);
     }
@@ -66,13 +70,12 @@ export default function CircularLogin() {
           }
         `}</style>
       </Head>
+
       <div className="relative h-screen w-screen bg-gradient-to-br from-[#1e3a8a] via-[#2563eb] to-[#3b82f6] flex items-center justify-center overflow-hidden">
-        {/* Circular*/}
         <div className="absolute w-[420px] h-[420px] rounded-full border-t-4 border-white/20 animate-rotateRing" />
         <div className="absolute w-[480px] h-[480px] rounded-full border-b-4 border-white/10 animate-rotateRingReverse" />
         <div className="absolute w-[540px] h-[540px] rounded-full border-l-4 border-white/5 animate-rotateRingSlow" />
 
-        {/* Circular login card*/}
         <div
           className={`relative w-96 h-96 rounded-full bg-white/30 backdrop-blur-md border border-white/20 shadow-2xl flex flex-col justify-center items-center transition-all duration-700 ease-out transform z-10 px-8 ${
             show ? "scale-100 opacity-100" : "scale-90 opacity-0"

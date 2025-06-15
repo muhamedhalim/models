@@ -3,6 +3,7 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { register } from "../api/auth";
 
 export default function JoinNow() {
   const [show, setShow] = useState(false);
@@ -34,10 +35,15 @@ export default function JoinNow() {
     }
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
       router.push("/dashboard");
-    } catch (err) {
-      setError("Failed to create account");
+    } catch (err: any) {
+      setError(err.message || "Failed to create account");
     } finally {
       setIsLoading(false);
     }
@@ -74,12 +80,10 @@ export default function JoinNow() {
       </Head>
 
       <div className="relative h-screen w-screen bg-gradient-to-br from-[#1e3a8a] via-[#2563eb] to-[#3b82f6] flex items-center justify-center overflow-hidden">
-        {/* rounded*/}
         <div className="absolute w-[420px] h-[420px] rounded-full border-t-4 border-white/20 animate-rotateRing" />
         <div className="absolute w-[480px] h-[480px] rounded-full border-b-4 border-white/10 animate-rotateRingReverse" />
         <div className="absolute w-[540px] h-[540px] rounded-full border-l-4 border-white/5 animate-rotateRingSlow" />
 
-        {/* rounded*/}
         <div
           className={`relative w-115 h-115 rounded-full bg-white/30 backdrop-blur-md border border-white/20 shadow-2xl flex flex-col justify-center items-center transition-all duration-700 ease-out transform z-10 px-8 ${
             show ? "scale-100 opacity-100" : "scale-90 opacity-0"
